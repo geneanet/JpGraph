@@ -1,48 +1,42 @@
-<?php
-require_once ('jpgraph/jpgraph.php');
-require_once ('jpgraph/jpgraph_bar.php');
-require_once ('jpgraph/jpgraph_line.php');
-require_once ('jpgraph/jpgraph_date.php');
+<?php // content="text/plain; charset=utf-8"
+// Basic contour plot example
 
-$graph_sdh = new Graph(1024, 450);
-$graph_sdh->SetMargin(50, 30, 50, 50);
-$graph_sdh->SetMarginColor('white');
-$graph_sdh->SetScale('dateint');
-$graph_sdh->title->Set('OBSERVATIONS');
+require_once ("jpgraph/jpgraph.php");
+require_once ("jpgraph/jpgraph_contour.php");
 
-// Setup the y-axis to show currency values
-$graph_sdh->yaxis->SetLabelFormatCallback('number_format');
-$graph_sdh->yaxis->SetLabelFormat('%s');
+$data = array(
+  array (0.5,1.1,1.5,1,2.0,3,3,2,1,0.1),
+  array (1.0,1.5,3.0,5,6.0,2,1,1.2,1,4),
+  array (0.9,2.0,2.1,3,6.0,7,3,2,1,1.4),
+  array (1.0,1.5,3.0,4,6.0,5,2,1.5,1,2),
+  array (0.8,2.0,3.0,3,4.0,4,3,2.4,2,3),
+  array (0.6,1.1,1.5,1,4.0,3.5,3,2,3,4),
+  array (1.0,1.5,3.0,5,6.0,2,1,1.2,2.7,4),
+  array (0.8,2.0,3.0,3,5.5,6,3,2,1,1.4),
+  array (1.0,1.5,3.0,4,6.0,5,2,1,0.5,0.2));
 
-//Use hour:minute format for the labels
-$graph_sdh->xaxis->scale->SetDateFormat('H:i');
-$graph_sdh->xgrid->Show();
-$graph_sdh->xaxis->SetLabelAngle(90);
+// Basic contour graph
+$graph = new Graph(350,250);
+$graph->SetScale('intint');
 
-// Force labels to only be displayed every 10 minutes
-$graph_sdh->xaxis->scale->ticks->Set(INTERVAL * 10);
+// Adjust the margins to fit the margin
+$graph->SetMargin(30,100,40,30);
 
-// Adjust the start time for an "even" 5 minute, i.e. 5,10,15,20,25, ...
-$graph_sdh->xaxis->scale->SetTimeAlign(MINADJ_10);
+// Setup
+$graph->title->Set('Basic contour plot');
+$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);
 
-$line_systolic = new LinePlot($systolic, $time);
-$line_systolic->SetLegend('SYSTOLIC');
-$line_diastolic = new LinePlot($diastolic, $time);
-$line_diastolic->SetLegend('DIASTOLIC');
-$line_heartrate = new LinePlot($heartrate, $time);
-$line_heartrate->SetLegend('HEART RATE');
-$line_temperature = new LinePlot($temperature, $time);
-$line_temperature->SetLegend('TEMPERATURE');
+// A simple contour plot with default arguments (e.g. 10 isobar lines)
+$cp = new ContourPlot($data);
 
-$graph_sdh->Add($line_systolic);
-$graph_sdh->Add($line_diastolic);
-$graph_sdh->Add($line_heartrate);
-$graph_sdh->Add($line_temperature);
-$line_systolic->mark->SetType(MARK_DTRIANGLE);
-$line_diastolic->mark->SetType(MARK_UTRIANGLE);
-$line_heartrate->mark->SetType(MARK_CIRCLE);
-$line_temperature->mark->SetType(MARK_DIAMOND);
-$graph_sdh->legend->SetAbsPos(20, 0, 'right', 'top');
-$graph_sdh->Stroke();
+// Display the legend
+$cp->ShowLegend();
+
+$graph->Add($cp);
+
+// ... and send the graph back to the browser
+$graph->Stroke();
 
 ?>
+
+
